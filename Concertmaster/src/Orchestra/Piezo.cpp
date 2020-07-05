@@ -1,20 +1,46 @@
+// Included Files
 #include "../Orchestra.h"
 #include "../Instruments.h"
 #include "../System.h"
 #include <Arduino.h>
 
-using namespace Orchestra;
-using namespace Instruments;
 
-BoardPiezo::BoardPiezo(uint8_t pin0, uint8_t pin1)
+
+// Using
+using namespace Orchestra;
+using namespace Orchestra::Instruments;
+
+
+
+Piezo::Piezo(uint8_t pin0, uint8_t pin1, uint8_t number) : Instrument(number)
 {
     this->pin0 = pin0;
     this->pin1 = pin1;
-    pinMode(pin0, OUTPUT);
-    pinMode(pin1, OUTPUT);
+    this->number = number;
+    pinMode(this->pin0, OUTPUT);
+    pinMode(this->pin1, OUTPUT);
 }
 
-void BoardPiezo::loop()
+
+Piezo::Piezo(Hotswap::HotswapSlot* slot, uint8_t index)
+{
+    if (index = 0)
+    {
+        this->pin0 = slot->getPin0();
+        this->pin1 = slot->getPin1();  
+    }
+    else
+    {
+        this->pin0 = slot->getPin2();
+        this->pin1 = slot->getPin3();
+    }
+    this->number = slot->getNumber();
+    pinMode(this->pin0, OUTPUT);
+    pinMode(this->pin1, OUTPUT);
+}
+
+
+void Piezo::run()
 {
     switch (state)
     {
@@ -58,7 +84,7 @@ void BoardPiezo::loop()
 }
 
  
-void BoardPiezo::setNote(uint8_t note)
+void Piezo::setNote(uint8_t note)
 {
     if (currentNote == note) return;
     if (note >= PITCHES_COUNT) return;

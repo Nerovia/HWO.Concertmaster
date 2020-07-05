@@ -1,68 +1,82 @@
+// Included Files
 #include "src/System.h"
 #include "src/Orchestra.h"
 #include "src/Instruments.h"
-#include "src/Interface.h"
-#include "src/Sockets.h"
+#include "src/Hotswap.h"
 
-using namespace Interface;
+
+
+// Using
 using namespace Orchestra;
-using namespace Instruments;
-using namespace Sockets;
-
-ConcertMaster concertMaster = ConcertMaster();
-SocketController socketController = SocketController(6);
+using namespace Orchestra::Instruments;
+using namespace Hotswap;
 
 
-#pragma region Events
 
-void elementsManipulated()
+Concertmaster concertmaster = Concertmaster(Serial);
+HotswapController hotswapController = HotswapController(6);
+
+
+void interruptStarted()
 {
-    Serial.println("Interrupted!");
-    if (concertMaster.getState() != OrchestraState::Rest)
-        concertMaster.setState(OrchestraState::Rest);
+    concertmaster.setState(OrchestraState::Interrupted);
 }
 
-void elementAdded(Socket *socket, uint8_t index)
-{
-    Serial.println("Added ID: " + String(socket->getID()) + " to Index: " + String(index));
-    if(concertMaster.instruments[index] != nullptr)
-        delete concertMaster.instruments[index];
 
-    switch (socket->getID())
+void interruptComplete()
+{
+    concertmaster.setState(OrchestraState::Rest);
+}
+
+
+void instrumentAdded(Instrument* instrument)
+{
+    std::vector<Instrument*>& instruments = concertmaster.instruments;
+
+    for (uint8_t n = 0; n < instruments.size(); n++)
     {
-        case ElementID::BoardStepper:
-            concertMaster.instruments[index] = new Instruments::BoardStepper((BoardSocket*)socket);
-            break;
+        if (instrument->getNumber() < instruments[n]->getNumber())
+        {
+            instruments.insert(instruments.begin() + n, instrument);
+            return;
+        }            
     }
+    instruments.push_back(instrument);
 }
 
-void elementRemoved(uint8_t index)
+
+void instrumentRemoved(Instrument* instrument)
 {
-    Serial.println("Removed Index: " + String(index));
-    delete concertMaster.instruments[index];
-    concertMaster.instruments[index] = nullptr;
-}
+    std::vector<Instrument*>& instruments = concertmaster.instruments;
 
-#pragma endregion
+    // Find and remove pointer from vector
+    for (uint8_t n = 0; n < instruments.size(); n++)
+	{
+		if (instruments[n] == instrument) 
+			instruments.erase(instruments.begin() + n, instruments.begin() + n + 1);
+	}
+}
 
 
 void setup()
 {
-    SerialInterface::setup(250000, &concertMaster);
-    concertMaster.instruments[0] = new Instruments::BoardPiezo(11, 12);
-    concertMaster.instruments[1] = new Instruments::BoardPiezo(13, 14);
-    socketController.sockets[2] = new BoardSocket(7, 4, 8, 3);
-    socketController.sockets[3] = new BoardSocket(9, 2, 10, 1);
-    socketController.onElementAdded = &elementAdded;
-    socketController.onElementRemoved = &elementRemoved;
-    socketController.onElementsManipulated = &elementsManipulated;
-    socketController.identifyElements();
+    Serial.begin(115200);
+
+    concertmaster.instruments.push_back(new Instruments::Piezo(11, 12, 0));
+    concertmaster.instruments.push_back(new Instruments::Piezo(13, 14, 2));
+    hotswapController.registerSlot(new HotswapSlot(7, 4, 8, 3, 1));
+    hotswapController.registerSlot(new HotswapSlot(9, 2, 10, 1, 3));
+    hotswapController.onInterrupStarted = &interruptStarted;
+    hotswapController.onInterrupCompleted = &interruptComplete;
+    hotswapController.onInstrumentAdded = &instrumentAdded;
+    hotswapController.onInstrumentRemoved = &instrumentRemoved;
+    hotswapController.refresh();
 }
+
 
 void loop()
 {
-    SerialInterface::loop();
-    System::Timing::loop();
-    socketController.loop();
-    concertMaster.loop();
+    System::Timing::run();
+    concertmaster.run();
+    hotswapController.run();
 }

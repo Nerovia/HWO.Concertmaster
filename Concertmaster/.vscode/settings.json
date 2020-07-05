@@ -10,6 +10,8 @@
         "sstream": "cpp",
         "tuple": "cpp",
         "xlocale": "cpp",
-        "xlocnum": "cpp"
+        "xlocnum": "cpp",
+        "algorithm": "cpp",
+        "functional": "cpp"
     }
 }

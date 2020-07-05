@@ -1,19 +1,43 @@
+// Included Files
 #include "../Orchestra.h"
 #include "../Instruments.h"
-#include "../Sockets.h"
+#include "../Hotswap.h"
 #include "../System.h"
 #include <Arduino.h>
 
+
+
+// Using
 using namespace Orchestra;
 using namespace Instruments;
-using namespace Sockets;
+using namespace Hotswap;
 
-BoardStepper::BoardStepper(BoardSocket *socket)
+
+
+Steppermotor::Steppermotor(uint8_t pin0, uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t number)
 {
-    this->socket = socket;
+    this->pin0 = pin0;
+    this->pin1 = pin1;
+    this->pin2 = pin2;
+    this->pin3 = pin3;
+    this->number = number;
+
+    pinMode(pin0, OUTPUT);
+    pinMode(pin1, OUTPUT);
+    pinMode(pin2, OUTPUT);
+    pinMode(pin3, OUTPUT);
 }
 
-void BoardStepper::loop()
+
+Steppermotor::Steppermotor(HotswapSlot* slot) : 
+    Steppermotor(slot->getPin0(), slot->getPin1(), slot->getPin2(), slot->getPin3(), slot->getNumber())
+{
+
+}
+
+
+
+void Steppermotor::run()
 {
     switch (state)
     {
@@ -26,10 +50,10 @@ void BoardStepper::loop()
             }
             else
             {
-                digitalWrite(socket->pin0, LOW);
-                digitalWrite(socket->pin1, LOW);
-                digitalWrite(socket->pin2, LOW);
-                digitalWrite(socket->pin3, LOW);
+                digitalWrite(pin0, LOW);
+                digitalWrite(pin1, LOW);
+                digitalWrite(pin2, LOW);
+                digitalWrite(pin3, LOW);
                 state = 2;
             }
             break;
@@ -57,7 +81,8 @@ void BoardStepper::loop()
     }
 }
 
-void BoardStepper::setNote(uint8_t note)
+
+void Steppermotor::setNote(uint8_t note)
 {
     if (currentNote == note) return;
     if (note >= PITCHES_COUNT) return;
@@ -66,33 +91,34 @@ void BoardStepper::setNote(uint8_t note)
     state = 0;
 }
 
-void BoardStepper::stepMotor(uint8_t stepNumber)
+
+void Steppermotor::stepMotor(uint8_t stepNumber)
 {
     switch (stepNumber)
     {
     case 0:  // 1010
-        digitalWrite(socket->pin0, HIGH);
-        digitalWrite(socket->pin1, LOW);
-        digitalWrite(socket->pin2, HIGH);
-        digitalWrite(socket->pin3, LOW);
+        digitalWrite(pin0, HIGH);
+        digitalWrite(pin1, LOW);
+        digitalWrite(pin2, HIGH);
+        digitalWrite(pin3, LOW);
         break;
     case 1:  // 0110
-        digitalWrite(socket->pin0, LOW);
-        digitalWrite(socket->pin1, HIGH);
-        digitalWrite(socket->pin2, HIGH);
-        digitalWrite(socket->pin3, LOW);
+        digitalWrite(pin0, LOW);
+        digitalWrite(pin1, HIGH);
+        digitalWrite(pin2, HIGH);
+        digitalWrite(pin3, LOW);
         break;
     case 2:  // 0101
-        digitalWrite(socket->pin0, LOW);
-        digitalWrite(socket->pin1, HIGH);
-        digitalWrite(socket->pin2, LOW);
-        digitalWrite(socket->pin3, HIGH);
+        digitalWrite(pin0, LOW);
+        digitalWrite(pin1, HIGH);
+        digitalWrite(pin2, LOW);
+        digitalWrite(pin3, HIGH);
         break;
     case 3:  // 1001
-        digitalWrite(socket->pin0, HIGH);
-        digitalWrite(socket->pin1, LOW);
-        digitalWrite(socket->pin2, LOW);
-        digitalWrite(socket->pin3, HIGH);
+        digitalWrite(pin0, HIGH);
+        digitalWrite(pin1, LOW);
+        digitalWrite(pin2, LOW);
+        digitalWrite(pin3, HIGH);
         break;
     }
 }

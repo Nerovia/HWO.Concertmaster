@@ -16,6 +16,6 @@ namespace System
 		extern uint32_t timeCyclePreviousMicros;
 
 		// Methodes
-		extern void loop();
+		extern void run();
 	}
 }

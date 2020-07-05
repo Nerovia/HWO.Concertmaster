@@ -14,7 +14,7 @@ uint32_t Timing::timeCyclePreviousMillis = 0;
 uint32_t Timing::timeCyclePreviousMicros = 0;
 
 // Methodes
-void Timing::loop()
+void Timing::run()
 {
 	// Set previous cycle time
 	timeCyclePreviousMillis = timeCycleMillis;

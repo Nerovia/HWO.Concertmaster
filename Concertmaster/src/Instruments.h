@@ -1,17 +1,119 @@
-#include "Orchestra.h"
-#include "Sockets.h"
+#pragma once
 
-#define PITCHES_COUNT 128
 
+
+// Forward Declaration
 namespace Orchestra
 {
-
     namespace Instruments
     {
+        class Instrument;
+        class Steppermotor;
+        class Piezo;
+    }   
+}
 
+
+
+
+// Included Files
+#include "Hotswap.h"
+#include <Arduino.h>
+
+
+
+// Macros
+#define PITCHES_COUNT 128
+
+
+
+// Declaration
+namespace Orchestra
+{
+    namespace Instruments
+    {   
+        // Defines the id for each instrument.
+        enum class InstrumentId : uint8_t
+        {
+            Unidentified,
+            Steppermotor,
+            Piezo,
+        };
+
+
+        
+        // Serves as a abstract base class for all instruments.
+        class Instrument
+        {
+            protected:
+                uint8_t number;
+
+                Instrument(uint8_t number = 0) {}
+                
+
+            public:
+                virtual ~Instrument() {}
+
+                virtual void setNote(uint8_t note) {}
+                virtual void run() {}
+                virtual InstrumentId getId() { return InstrumentId::Unidentified; }
+                uint8_t getNumber() { return number; }
+        };
+
+
+
+        class Steppermotor : public Instrument
+        {
+            private:
+                uint8_t pin0, pin1, pin2, pin3;
+
+                uint8_t state = 2;
+                uint8_t currentNote = 0;
+                uint16_t currentStep = 0;
+                uint32_t delayStep = 0;
+                uint32_t timeLast = 0;
+                bool direction = false;
+
+                void stepMotor(uint8_t stepNumber);
+
+
+            public:
+                Steppermotor(uint8_t pin0, uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t number = 0);
+                Steppermotor(Hotswap::HotswapSlot* slot);
+
+                void run() override;
+                void setNote(uint8_t note) override;
+                InstrumentId getId() override { return InstrumentId::Steppermotor; }
+        };
+
+        
+
+        class Piezo : public Instrument
+        {
+            private:
+                uint8_t pin0, pin1;
+
+                uint8_t currentNote = 0;
+                uint8_t state = 0;
+                uint32_t timeLast;
+                uint32_t delayPeriod;
+                bool polarityState;
+
+            public:
+                Piezo(uint8_t pin0, uint8_t pin1, uint8_t number = 0);
+                Piezo(Hotswap::HotswapSlot* slot, uint8_t index);
+
+                void run() override;
+                void setNote(uint8_t note) override;
+                InstrumentId getId() override { return InstrumentId::Piezo; }
+        };
+
+
+
+        // Defines the freqeuncy for each playable note.
         static float pitches[PITCHES_COUNT] = {
 
-            0.00, // 000  ->  Null
+            0.00,  // 000  ->  Null
 
             8.66,  // 001  ->  C#   -1
             9.18,  // 002  ->  D    -1
@@ -151,57 +253,5 @@ namespace Orchestra
             11839.82, // 126  ->  F#    9
             12543.85, // 127  ->  G     9
         };
-
-
-
-        class BoardStepper : public Instrument
-        {
-        private:
-            // Initializing Parameters
-            Sockets::BoardSocket *socket;
-
-            // Memory
-            uint8_t state = 2;
-            uint8_t currentNote = 0;
-            uint16_t currentStep = 0;
-            uint32_t delayStep = 0;
-            uint32_t timeLast = 0;
-
-            bool direction = false;
-
-            // Private Methodes
-            void stepMotor(uint8_t stepNumber);
-
-        public:
-            // Constructor
-            BoardStepper(Sockets::BoardSocket *socket);
-
-            // Public Methodes
-            void loop() override;
-            void setNote(uint8_t note) override;
-        };
-
-        
-
-        class BoardPiezo : public Instrument
-        {
-        private:
-            uint8_t pin0;
-            uint8_t pin1;
-
-            uint8_t currentNote = 0;
-            uint8_t state = 0;
-            uint32_t timeLast;
-            uint32_t delayPeriod;
-
-            bool polarityState;
-
-        public:
-            BoardPiezo(uint8_t pin0, uint8_t pin1);
-
-            void loop() override;
-            void setNote(uint8_t note) override;
-        };
-
-    } // namespace Instruments
-} // namespace Orchestra
+    }
+}
