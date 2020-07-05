@@ -1,0 +1,7 @@
+{
+    "sketch": "Concertmaster.ino",
+    "board": "arduino:samd:mkr1000",
+    "programmer": "Arduino as ISP",
+    "port": "COM8",
+    "output": "../Build"
+}

@@ -1,0 +1,15 @@
+{
+    "C_Cpp.errorSquiggles": "Enabled",
+    "C_Cpp.dimInactiveRegions": false,
+    "C_Cpp.intelliSenseEngineFallback": "Enabled",
+    "files.associations": {
+        "cstddef": "cpp",
+        "*.tcc": "cpp",
+        "istream": "cpp",
+        "ostream": "cpp",
+        "sstream": "cpp",
+        "tuple": "cpp",
+        "xlocale": "cpp",
+        "xlocnum": "cpp"
+    }
+}
