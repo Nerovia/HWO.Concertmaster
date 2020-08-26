@@ -78,6 +78,7 @@ void Concertmaster::run()
 
 		case OrchestraState::Tune:
 			break;
+
 	}
 
 	for (auto& instrument : instruments)
@@ -160,7 +161,8 @@ void Concertmaster::mute()
 
 void Concertmaster::clearTones()
 {
-	tones.empty();
+	while(!tones.empty())
+		tones.pop();
 }
 
 

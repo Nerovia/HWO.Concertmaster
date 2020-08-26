@@ -10,11 +10,14 @@
                 "C:\\Users\\Alain Rohrbach\\Documents\\Arduino\\libraries\\QList\\src",
                 "C:\\Users\\Alain Rohrbach\\Documents\\Arduino\\libraries\\arduino-event-master",
                 "C:\\Users\\Alain Rohrbach\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.6.20\\**",
-                "C:\\Users\\Alain Rohrbach\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**"
+                "C:\\Users\\Alain Rohrbach\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**",
+                "C:\\Users\\alain\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.8.3\\**",
+                "C:\\Users\\alain\\AppData\\Local\\Arduino15\\packages\\arduino\\tools\\**"
             ],
             "forcedInclude": [
                 "C:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino\\Arduino.h",
-                "C:\\Users\\Alain Rohrbach\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.6.20\\cores\\arduino\\Arduino.h"
+                "C:\\Users\\Alain Rohrbach\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.6.20\\cores\\arduino\\Arduino.h",
+                "C:\\Users\\alain\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\samd\\1.8.3\\cores\\arduino\\Arduino.h"
             ],
             "intelliSenseMode": "msvc-x64",
             "compilerPath": "C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/cl.exe",

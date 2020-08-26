@@ -117,5 +117,6 @@ void HotswapSlot::identifyElements()
     pinMode(pin2, OUTPUT);
     pinMode(pin3, OUTPUT);
 
+    Serial.println(id);
     setAttachedElementId((ElementId)id); // Argument validation included
 }

@@ -14,7 +14,7 @@ using namespace Hotswap;
 
 
 Concertmaster concertmaster = Concertmaster(Serial);
-HotswapController hotswapController = HotswapController(6);
+HotswapController hotswapController = HotswapController(A1);
 
 
 void interruptStarted()
@@ -62,10 +62,11 @@ void setup()
 {
     Serial.begin(115200);
 
-    concertmaster.instruments.push_back(new Instruments::Piezo(11, 12, 0));
-    concertmaster.instruments.push_back(new Instruments::Piezo(13, 14, 2));
-    hotswapController.registerSlot(new HotswapSlot(7, 4, 8, 3, 1));
-    hotswapController.registerSlot(new HotswapSlot(9, 2, 10, 1, 3));
+    concertmaster.instruments.push_back(new Instruments::Piezo(A6, A5, 0));
+    concertmaster.instruments.push_back(new Instruments::Piezo(12, 13, 1));
+    hotswapController.registerSlot(new HotswapSlot(6, 5, 7, 4, 2));
+    hotswapController.registerSlot(new HotswapSlot(8, 3, 9, 2, 3));
+    hotswapController.registerSlot(new HotswapSlot(10, 1, 11, 0, 4));
     hotswapController.onInterrupStarted = &interruptStarted;
     hotswapController.onInterrupCompleted = &interruptComplete;
     hotswapController.onInstrumentAdded = &instrumentAdded;

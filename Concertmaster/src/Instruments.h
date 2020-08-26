@@ -35,9 +35,9 @@ namespace Orchestra
         // Defines the id for each instrument.
         enum class InstrumentId : uint8_t
         {
-            Unidentified,
-            Steppermotor,
-            Piezo,
+            Unidentified = 0,
+            Steppermotor = 1,
+            Piezo = 2,
         };
 
 

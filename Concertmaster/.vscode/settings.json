@@ -12,6 +12,8 @@
         "xlocale": "cpp",
         "xlocnum": "cpp",
         "algorithm": "cpp",
-        "functional": "cpp"
+        "functional": "cpp",
+        "deque": "cpp",
+        "vector": "cpp"
     }
 }
