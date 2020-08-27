@@ -35,6 +35,7 @@ namespace Orchestra
 		Rest,
 		Tune,
 		Perform,
+        Conclude,
         Interrupted,
 	};
 

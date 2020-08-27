@@ -44,6 +44,7 @@ void Concertmaster::run()
 		case OrchestraState::Rest:
 			break;
 
+		case OrchestraState::Conclude:
 		case OrchestraState::Perform:
 
 			if (!isToneRequested && tones.size() < MAX_QUEUED_TONES)
@@ -58,7 +59,7 @@ void Concertmaster::run()
 
 				if (!isWaitingDuration)
 				{
-					if (tone.instrument < tones.size())
+					if (tone.instrument < instruments.size())
 					{
 						auto instrument = instruments.at(tone.instrument);
 						if (instrument != nullptr) 
@@ -73,6 +74,10 @@ void Concertmaster::run()
 					tones.pop();
 					isWaitingDuration = false;
 				}
+			}
+			else if (orchestraState == OrchestraState::Conclude)
+			{
+				setState(OrchestraState::Rest);
 			}
 			break;
 
@@ -104,6 +109,9 @@ bool Concertmaster::setState(OrchestraState newState)
 		sendInstruments();
 		break;
 	
+	case OrchestraState::Conclude:
+		break;
+
 	case OrchestraState::Rest:
 		break;
 		
@@ -113,7 +121,6 @@ bool Concertmaster::setState(OrchestraState newState)
 
 	case OrchestraState::Perform:
 		mute();
-		isToneRequested = false;
 		break;
 	}
 
@@ -124,14 +131,20 @@ bool Concertmaster::setState(OrchestraState newState)
 	switch (orchestraState)
 	{
 	case OrchestraState::Interrupted:
+		isToneRequested = false;
 		mute();
 		break;
 
+	case OrchestraState::Conclude:
+		break;
+
 	case OrchestraState::Rest:
+		isToneRequested = false;
 		mute();
 		break;
 
 	case OrchestraState::Tune:
+		isToneRequested = false;
 		break;
 
 	case OrchestraState::Perform:
@@ -223,6 +236,10 @@ void Concertmaster::receive()
 			
 			switch (getNextValue(data))
 			{
+
+			case OrchestraState::Conclude:
+				setState(OrchestraState::Conclude);
+				break;
 				
 			case OrchestraState::Rest:
 				setState(OrchestraState::Rest);
